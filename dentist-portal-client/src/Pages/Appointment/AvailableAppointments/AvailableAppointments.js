@@ -8,12 +8,13 @@ import AppointmentOption from "./AppointmentOption";
 
 const AvailableAppointments = ({ selectedDate }) => {
   const [treatment, setTreatment] = useState(null);
+  const date = format(selectedDate, "PP");
 
   const { data: appointmentOptions = [] } = useQuery({
-    queryKey: ["appointment-options"],
+    queryKey: ["appointment-options", date],
     queryFn: () =>
-      fetch("http://localhost:5000/appointment-options").then((res) =>
-        res.json()
+      fetch(`http://localhost:5000/appointment-options?date=${date}`).then(
+        (res) => res.json()
       ),
   });
 

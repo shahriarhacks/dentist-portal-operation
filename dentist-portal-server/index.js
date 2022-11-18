@@ -27,9 +27,26 @@ async function run() {
       .collection("bookings");
 
     app.get("/appointment-options", async (req, res) => {
+      const date = req.query.date;
       const query = {};
-      const result = await appointmentOptionsCollections.find(query).toArray();
-      res.send(result);
+      const bookingQuery = { appointmentDate: date };
+      const options = await appointmentOptionsCollections.find(query).toArray();
+      const alreadyBooked = await bookingsCollections
+        .find(bookingQuery)
+        .toArray();
+
+      options.forEach((option) => {
+        const optionBooked = alreadyBooked.filter(
+          (book) => book?.treatment === option?.name
+        );
+        const bookedSlots = optionBooked.map((book) => book.slot);
+        console.log(option?.name, date, bookedSlots);
+        const remainingSlots = option.slots.filter(
+          (slot) => !bookedSlots.includes(slot)
+        );
+        option.slots = remainingSlots;
+      });
+      res.send(options);
     });
 
     app.post("/bookings", async (req, res) => {

@@ -22,10 +22,19 @@ async function run() {
     const appointmentOptionsCollections = client
       .db("DentistPortal")
       .collection("appointmentOptions");
+    const bookingsCollections = client
+      .db("DentistPortal")
+      .collection("bookings");
 
     app.get("/appointment-options", async (req, res) => {
       const query = {};
       const result = await appointmentOptionsCollections.find(query).toArray();
+      res.send(result);
+    });
+
+    app.post("/bookings", async (req, res) => {
+      const booking = req.body;
+      const result = await bookingsCollections.insertOne(booking);
       res.send(result);
     });
   } finally {

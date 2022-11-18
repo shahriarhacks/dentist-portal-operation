@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { AuthContext } from "../../contexts/AuthProvider";
 
 const SignUp = () => {
@@ -13,13 +13,12 @@ const SignUp = () => {
   } = useForm();
   const { createUser, updateUser } = useContext(AuthContext);
   const [signUpError, setSignUPError] = useState("");
+  const navigate = useNavigate();
+
   const handleSignUp = (data) => {
-    console.log(data);
     setSignUPError("");
     createUser(data.email, data.password)
       .then((result) => {
-        const user = result.user;
-        console.log(user);
         toast("User Created Successfully.");
         const userInfo = {
           displayName: data.name,
@@ -27,6 +26,7 @@ const SignUp = () => {
         updateUser(userInfo)
           .then(() => {
             reset();
+            navigate("/");
           })
           .catch((err) => console.log(err));
       })
@@ -43,7 +43,6 @@ const SignUp = () => {
         <form onSubmit={handleSubmit(handleSignUp)}>
           <div className="form-control w-full max-w-xs">
             <label className="label">
-              {" "}
               <span className="label-text">Name</span>
             </label>
             <input
@@ -59,7 +58,6 @@ const SignUp = () => {
           </div>
           <div className="form-control w-full max-w-xs">
             <label className="label">
-              {" "}
               <span className="label-text">Email</span>
             </label>
             <input
@@ -75,7 +73,6 @@ const SignUp = () => {
           </div>
           <div className="form-control w-full max-w-xs">
             <label className="label">
-              {" "}
               <span className="label-text">Password</span>
             </label>
             <input

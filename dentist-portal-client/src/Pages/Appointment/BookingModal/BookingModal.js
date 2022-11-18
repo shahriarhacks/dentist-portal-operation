@@ -38,13 +38,13 @@ const BookingModal = ({ treatment, setTreatment, selectedDate }) => {
       .then((data) => {
         if (data.acknowledged) {
           toast.success("Booking Confirmed");
+          setTreatment(null);
         }
       });
 
     // TODO: send data to the server
     // and once data is saved then close the modal
     // and display success toast
-    setTreatment(null);
   };
 
   return (

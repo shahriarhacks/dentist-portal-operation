@@ -1,13 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { format } from "date-fns";
-import React, { useContext, useState } from "react";
-import { AuthContext } from "../../../contexts/AuthProvider";
+import React, { useState } from "react";
+
+import PrivateRoute from "../../../Routes/PrivateRoute/PrivateRoute";
 import BookingModal from "../BookingModal/BookingModal";
 import AppointmentOption from "./AppointmentOption";
 
 const AvailableAppointments = ({ selectedDate }) => {
   const [treatment, setTreatment] = useState(null);
-  const { user } = useContext(AuthContext);
 
   const { data: appointmentOptions = [] } = useQuery({
     queryKey: ["appointment-options"],
@@ -31,12 +31,14 @@ const AvailableAppointments = ({ selectedDate }) => {
           ></AppointmentOption>
         ))}
       </div>
-      {treatment && user?.uid && (
-        <BookingModal
-          selectedDate={selectedDate}
-          treatment={treatment}
-          setTreatment={setTreatment}
-        ></BookingModal>
+      {treatment && (
+        <PrivateRoute>
+          <BookingModal
+            selectedDate={selectedDate}
+            treatment={treatment}
+            setTreatment={setTreatment}
+          ></BookingModal>
+        </PrivateRoute>
       )}
     </section>
   );

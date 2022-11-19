@@ -5,6 +5,7 @@ import { AuthContext } from "../../../contexts/AuthProvider";
 const MyAppointment = () => {
   const { user } = useContext(AuthContext);
   const url = `${process.env.REACT_APP_SERVER_URL}/bookings?email=${user?.email}`;
+
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings", user?.email],
     queryFn: async () => {

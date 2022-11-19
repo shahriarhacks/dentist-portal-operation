@@ -27,7 +27,7 @@ const BookingModal = ({ treatment, setTreatment, selectedDate, refetch }) => {
       phone,
     };
 
-    fetch("http://localhost:5000/bookings", {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/bookings`, {
       method: "POST",
       headers: {
         "content-type": "application/json",
@@ -41,7 +41,7 @@ const BookingModal = ({ treatment, setTreatment, selectedDate, refetch }) => {
           refetch();
           setTreatment(null);
         } else {
-          toast.error(data.message);
+          toast.error("You already have booking this Treatment");
         }
       });
 

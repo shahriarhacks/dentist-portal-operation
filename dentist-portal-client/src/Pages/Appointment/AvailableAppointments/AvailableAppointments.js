@@ -13,9 +13,9 @@ const AvailableAppointments = ({ selectedDate }) => {
   const { data: appointmentOptions = [], refetch } = useQuery({
     queryKey: ["appointment-options", date],
     queryFn: () =>
-      fetch(`http://localhost:5000/appointment-options?date=${date}`).then(
-        (res) => res.json()
-      ),
+      fetch(
+        `${process.env.REACT_APP_SERVER_URL}/appointment-options?date=${date}`
+      ).then((res) => res.json()),
   });
 
   return (

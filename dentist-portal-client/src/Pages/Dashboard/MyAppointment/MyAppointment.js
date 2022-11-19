@@ -4,11 +4,15 @@ import { AuthContext } from "../../../contexts/AuthProvider";
 
 const MyAppointment = () => {
   const { user } = useContext(AuthContext);
-  const url = `http://localhost:5000/bookings?email=${user?.email}`;
+  const url = `${process.env.REACT_APP_SERVER_URL}/bookings?email=${user?.email}`;
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings", user?.email],
     queryFn: async () => {
-      const res = await fetch(url);
+      const res = await fetch(url, {
+        headers: {
+          authorization: `SAST+SYJT ${localStorage.getItem("access-token")}`,
+        },
+      });
       const data = await res.json();
       return data;
     },

@@ -44,6 +44,7 @@ async function run() {
       .db("DentistPortal")
       .collection("bookings");
     const usersCollections = client.db("DentistPortal").collection("users");
+    const doctorsCollections = client.db("DentistPortal").collection("doctors");
 
     app.get("/users", async (req, res) => {
       const query = {};
@@ -57,6 +58,13 @@ async function run() {
       const user = await usersCollections.findOne(query);
       res.send({ isAdmin: user?.role === "admin" });
     });
+
+    app.post("/users", async (req, res) => {
+      const user = req.body;
+      const result = await usersCollections.insertOne(user);
+      res.send(result);
+    });
+
     app.put("/users/admin/:id", verifyJWT, async (req, res) => {
       const id = req.params.id;
       const decodedEmail = req.decoded.email;
@@ -155,9 +163,9 @@ async function run() {
       res.status(403).send({ accessToken: "" });
     });
 
-    app.post("/users", async (req, res) => {
-      const user = req.body;
-      const result = await usersCollections.insertOne(user);
+    app.post("/doctors", async (req, res) => {
+      const doctor = req.body;
+      const result = await doctorsCollections.insertOne(doctor);
       res.send(result);
     });
   } finally {

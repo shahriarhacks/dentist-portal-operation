@@ -46,6 +46,18 @@ async function run() {
     const usersCollections = client.db("DentistPortal").collection("users");
     const doctorsCollections = client.db("DentistPortal").collection("doctors");
 
+    //Verify Admin
+    const verifyAdmin = async (req, res, next) => {
+      const decodedEmail = req.decoded.email;
+      const query = { email: decodedEmail };
+      const user = await usersCollections.findOne(query);
+
+      if (user?.role !== "admin") {
+        return res.status(403).send({ message: "forbidden access" });
+      }
+      next();
+    };
+
     app.get("/users", async (req, res) => {
       const query = {};
       const result = await usersCollections.find(query).toArray();
@@ -65,16 +77,8 @@ async function run() {
       res.send(result);
     });
 
-    app.put("/users/admin/:id", verifyJWT, async (req, res) => {
+    app.put("/users/admin/:id", verifyJWT, verifyAdmin, async (req, res) => {
       const id = req.params.id;
-      const decodedEmail = req.decoded.email;
-      const query = { email: decodedEmail };
-
-      const user = await usersCollections.findOne(query);
-      if (user?.role !== "admin") {
-        return res.status(403).send("Forbidden Access");
-      }
-
       const filter = { _id: ObjectId(id) };
       const options = { upsert: true };
       const updatedDoc = {
@@ -163,19 +167,19 @@ async function run() {
       res.status(403).send({ accessToken: "" });
     });
 
-    app.get("/doctors", async (req, res) => {
+    app.get("/doctors", verifyJWT, verifyAdmin, async (req, res) => {
       const query = {};
       const result = await doctorsCollections.find(query).toArray();
       res.send(result);
     });
 
-    app.post("/doctors", async (req, res) => {
+    app.post("/doctors", verifyJWT, verifyAdmin, async (req, res) => {
       const doctor = req.body;
       const result = await doctorsCollections.insertOne(doctor);
       res.send(result);
     });
 
-    app.delete("/doctors/:id", async (req, res) => {
+    app.delete("/doctors/:id", verifyJWT, verifyAdmin, async (req, res) => {
       const id = req.params.id;
       const query = { _id: ObjectId(id) };
       const result = await doctorsCollections.deleteOne(query);

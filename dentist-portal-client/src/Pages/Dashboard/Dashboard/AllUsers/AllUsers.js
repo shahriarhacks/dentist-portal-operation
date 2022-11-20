@@ -1,6 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import toast from "react-hot-toast";
+import useHeaderJWT from "../../../../hooks/useHeaderJWT";
 
 const AllUsers = () => {
   const { data: users = [], refetch } = useQuery({
@@ -12,12 +13,12 @@ const AllUsers = () => {
     },
   });
 
+  const headers = useHeaderJWT();
+
   const handleMakeAdmin = (id) => {
     fetch(`${process.env.REACT_APP_SERVER_URL}/users/admin/${id}`, {
       method: "PUT",
-      headers: {
-        authorization: `SAST+SYJ ${localStorage.getItem("access-token")}`,
-      },
+      headers: headers,
     })
       .then((res) => res.json())
       .then((data) => {

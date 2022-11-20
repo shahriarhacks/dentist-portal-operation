@@ -1,18 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useContext } from "react";
 import { AuthContext } from "../../../contexts/AuthProvider";
+import useHeaderJWT from "../../../hooks/useHeaderJWT";
 
 const MyAppointment = () => {
   const { user } = useContext(AuthContext);
   const url = `${process.env.REACT_APP_SERVER_URL}/bookings?email=${user?.email}`;
 
+  const headers = useHeaderJWT();
+
   const { data: bookings = [] } = useQuery({
     queryKey: ["bookings", user?.email],
     queryFn: async () => {
       const res = await fetch(url, {
-        headers: {
-          authorization: `SAST+SYJT ${localStorage.getItem("access-token")}`,
-        },
+        headers: headers,
       });
       const data = await res.json();
       return data;
@@ -35,15 +36,16 @@ const MyAppointment = () => {
           </thead>
           <tbody>
             {/* <!-- row 1 --> */}
-            {bookings.map((booking, i) => (
-              <tr key={booking._id}>
-                <th>{i + 1}</th>
-                <td>{booking.patient}</td>
-                <td>{booking.treatment}</td>
-                <td>{booking.appointmentDate}</td>
-                <td>{booking.slot}</td>
-              </tr>
-            ))}
+            {bookings &&
+              bookings.map((booking, i) => (
+                <tr key={booking._id}>
+                  <th>{i + 1}</th>
+                  <td>{booking.patient}</td>
+                  <td>{booking.treatment}</td>
+                  <td>{booking.appointmentDate}</td>
+                  <td>{booking.slot}</td>
+                </tr>
+              ))}
           </tbody>
         </table>
       </div>

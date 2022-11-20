@@ -104,6 +104,16 @@ async function run() {
       res.send(options);
     });
 
+    app.get("/appointment-specialty", async (req, res) => {
+      const query = {};
+      const option = { name: 1 };
+      const result = await appointmentOptionsCollections
+        .find(query)
+        .project(option)
+        .toArray();
+      res.send(result);
+    });
+
     app.get("/bookings", verifyJWT, async (req, res) => {
       // const accessToken = req.headers;
       const email = req.query.email;

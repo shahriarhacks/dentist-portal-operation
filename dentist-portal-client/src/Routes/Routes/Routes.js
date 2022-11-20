@@ -10,6 +10,8 @@ import SignUp from "../../Pages/SignUp/SignUp";
 import PrivateRoute from "../PrivateRoute/PrivateRoute";
 import DashboardLayout from "../../Layout/DashboardLayout";
 import AdminRoute from "../Admin/AdminRoute";
+import AddDoctor from "../../Pages/Dashboard/AddDoctor/AddDoctor";
+import ManagedDoctor from "../../Pages/Dashboard/ManagedDoctor/ManagedDoctor";
 
 const router = createBrowserRouter([
   {
@@ -58,8 +60,23 @@ const router = createBrowserRouter([
         path: "/dashboard/users",
         element: (
           <AdminRoute>
-            {" "}
             <AllUsers />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/add-doctor",
+        element: (
+          <AdminRoute>
+            <AddDoctor />
+          </AdminRoute>
+        ),
+      },
+      {
+        path: "/dashboard/manage-doctor",
+        element: (
+          <AdminRoute>
+            <ManagedDoctor />
           </AdminRoute>
         ),
       },

@@ -1,12 +1,19 @@
 import { useQuery } from "@tanstack/react-query";
-import React from "react";
+import React, { useState } from "react";
+import toast from "react-hot-toast";
 import useHeader from "../../../hooks/useHeaderJWT";
+import ConfirmationModal from "../../Shared/ConfirmationModal/ConfirmationModal";
 import Loading from "../../Shared/Loading/Loading";
 
 const ManagedDoctor = () => {
   const header = useHeader();
+  const [deleteDoctor, setDeleteDoctor] = useState(null);
 
-  const { data: doctors, isLoading } = useQuery({
+  const {
+    data: doctors,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["doctors"],
     queryFn: async () => {
       try {
@@ -18,7 +25,23 @@ const ManagedDoctor = () => {
       } catch (err) {}
     },
   });
-  console.log(doctors);
+  const closeModal = () => {
+    setDeleteDoctor(null);
+  };
+
+  const handleDelete = (doctor) => {
+    fetch(`${process.env.REACT_APP_SERVER_URL}/doctors/${doctor?._id}`, {
+      method: "DELETE",
+      headers: header,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.acknowledged) {
+          refetch();
+          toast.success(`Delete confirm Doctor ${deleteDoctor?.name}`);
+        }
+      });
+  };
 
   if (isLoading) {
     return <Loading />;
@@ -54,6 +77,7 @@ const ManagedDoctor = () => {
                 <td>{doctor.specialty}</td>
                 <td>
                   <label
+                    onClick={() => setDeleteDoctor(doctor)}
                     htmlFor="confirmation-modal"
                     className="btn btn-sm btn-error"
                   >
@@ -65,6 +89,15 @@ const ManagedDoctor = () => {
           </tbody>
         </table>
       </div>
+      {deleteDoctor && (
+        <ConfirmationModal
+          deleteAction={handleDelete}
+          closeModal={closeModal}
+          modalData={deleteDoctor}
+          title={`Are you sure you want to delete Doctor ${deleteDoctor?.name}`}
+          message={`If you delete Doctor ${deleteDoctor?.name} it can't be undone previous position`}
+        />
+      )}
     </div>
   );
 };

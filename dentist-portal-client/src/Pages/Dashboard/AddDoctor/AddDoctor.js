@@ -59,7 +59,7 @@ const AddDoctor = () => {
             .then((res) => res.json())
             .then((result) => {
               if (result.acknowledged) {
-                toast.success(`${data.name} is added successfully`);
+                toast.success(`Doctor ${data.name} is added successfully`);
                 navigate("/dashboard/manage-doctor");
               }
             });

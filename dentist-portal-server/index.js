@@ -163,6 +163,12 @@ async function run() {
       res.status(403).send({ accessToken: "" });
     });
 
+    app.get("/doctors", async (req, res) => {
+      const query = {};
+      const result = await doctorsCollections.find(query).toArray();
+      res.send(result);
+    });
+
     app.post("/doctors", async (req, res) => {
       const doctor = req.body;
       const result = await doctorsCollections.insertOne(doctor);

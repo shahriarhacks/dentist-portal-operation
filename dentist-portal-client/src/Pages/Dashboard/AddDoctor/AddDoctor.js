@@ -2,8 +2,11 @@ import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useForm } from "react-hook-form";
 import toast from "react-hot-toast";
+import { useNavigate } from "react-router-dom";
+import Loading from "../../Shared/Loading/Loading";
 
 const AddDoctor = () => {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -12,7 +15,7 @@ const AddDoctor = () => {
   } = useForm();
 
   const imageHostKey = process.env.REACT_APP_apiKeyImageHost;
-  const { data: options = [] } = useQuery({
+  const { data: options, isLoading } = useQuery({
     queryKey: ["appointment-specialty"],
     queryFn: async () => {
       const res = await fetch(
@@ -57,6 +60,7 @@ const AddDoctor = () => {
             .then((result) => {
               if (result.acknowledged) {
                 toast.success(`${data.name} is added successfully`);
+                navigate("/dashboard/manage-doctor");
               }
             });
         }
@@ -64,10 +68,15 @@ const AddDoctor = () => {
 
     reset();
   };
+
+  if (isLoading) {
+    return <Loading />;
+  }
+
   return (
     <div className="h-[550px] flex justify-center items-center">
       <div className="w-96 p-7">
-        <h2 className="text-xl text-center">Sign Up</h2>
+        <h2 className="text-xl text-center">Add Doctor</h2>
         <form onSubmit={handleSubmit(handleAddDoctor)}>
           <div className="form-control w-full max-w-xs">
             <label className="label">

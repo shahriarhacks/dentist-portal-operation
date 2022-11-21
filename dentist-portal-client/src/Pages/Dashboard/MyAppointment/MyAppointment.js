@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import React, { useContext } from "react";
+import { Link } from "react-router-dom";
 import { AuthContext } from "../../../contexts/AuthProvider";
 import useHeaderJWT from "../../../hooks/useHeaderJWT";
 
@@ -27,11 +28,13 @@ const MyAppointment = () => {
           {/* <!-- head --> */}
           <thead>
             <tr>
-              <th>Serial</th>
+              <th>SL</th>
               <th>Patent Name</th>
               <th>Treatment Name</th>
+              <th>Price</th>
               <th>Date</th>
               <th>Time</th>
+              <th>Status</th>
             </tr>
           </thead>
           <tbody>
@@ -42,8 +45,19 @@ const MyAppointment = () => {
                   <th>{i + 1}</th>
                   <td>{booking.patient}</td>
                   <td>{booking.treatment}</td>
+                  <td>{booking.price}</td>
                   <td>{booking.appointmentDate}</td>
                   <td>{booking.slot}</td>
+                  <td>
+                    {booking.price && !booking.paid && (
+                      <Link to={`/dashboard/payment/${booking._id}`}>
+                        <button className="btn btn-primary btn-sm">Pay</button>
+                      </Link>
+                    )}
+                    {booking.price && booking.paid && (
+                      <span className="text-green-500">Paid</span>
+                    )}
+                  </td>
                 </tr>
               ))}
           </tbody>

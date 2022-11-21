@@ -3,6 +3,7 @@ const cors = require("cors");
 const jwt = require("jsonwebtoken");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
 require("dotenv").config();
+const stripe = require("stripe")(process.env.STRIPE_SECRET);
 
 const port = process.env.PORT || 5000;
 
@@ -45,6 +46,9 @@ async function run() {
       .collection("bookings");
     const usersCollections = client.db("DentistPortal").collection("users");
     const doctorsCollections = client.db("DentistPortal").collection("doctors");
+    const paymentsCollections = client
+      .db("DentistPortal")
+      .collection("payments");
 
     //Verify Admin
     const verifyAdmin = async (req, res, next) => {
@@ -126,6 +130,29 @@ async function run() {
       res.send(result);
     });
 
+    //STRIPE Payment
+
+    app.post("/create-payment-intent", async (req, res) => {
+      const data = req.body;
+      const price = data?.price;
+      const amount = price * 100;
+
+      const paymentIntent = await stripe.paymentIntents.create({
+        currency: "usd",
+        amount: amount,
+        payment_method_types: ["card"],
+      });
+      res.send({
+        clientSecret: paymentIntent.client_secret,
+      });
+    });
+
+    app.post("/payments", async (req, res) => {
+      const payment = req.body;
+      const result = await paymentsCollections.insertOne(payment);
+      res.send(result);
+    });
+
     app.get("/bookings", verifyJWT, async (req, res) => {
       // const accessToken = req.headers;
       const email = req.query.email;
@@ -135,6 +162,13 @@ async function run() {
       }
       const query = { email: email };
       const result = await bookingsCollections.find(query).toArray();
+      res.send(result);
+    });
+
+    app.get("/bookings/:id", async (req, res) => {
+      const id = req.params.id;
+      const query = { _id: ObjectId(id) };
+      const result = await bookingsCollections.findOne(query);
       res.send(result);
     });
 

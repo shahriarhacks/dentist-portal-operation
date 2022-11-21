@@ -12,11 +12,14 @@ import DashboardLayout from "../../Layout/DashboardLayout";
 import AdminRoute from "../Admin/AdminRoute";
 import AddDoctor from "../../Pages/Dashboard/AddDoctor/AddDoctor";
 import ManagedDoctor from "../../Pages/Dashboard/ManagedDoctor/ManagedDoctor";
+import Payment from "../../Pages/Dashboard/Payment/Payment";
+import ErrorPage from "../../Pages/Shared/ErrorPage/ErrorPage";
 
 const router = createBrowserRouter([
   {
     path: "/",
     element: <Main></Main>,
+    errorElement: <ErrorPage />,
     children: [
       {
         path: "/",
@@ -42,6 +45,7 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
+    errorElement: <ErrorPage />,
     element: (
       <PrivateRoute>
         <DashboardLayout />
@@ -55,6 +59,12 @@ const router = createBrowserRouter([
       {
         path: "/dashboard/home",
         element: <MyAppointment />,
+      },
+      {
+        path: "/dashboard/payment/:id",
+        element: <Payment />,
+        loader: ({ params }) =>
+          fetch(`${process.env.REACT_APP_SERVER_URL}/bookings/${params.id}`),
       },
       {
         path: "/dashboard/users",

@@ -19,5 +19,8 @@
     "jsonwebtoken": "^8.5.1",
     "mongodb": "^4.12.0",
     "stripe": "^11.1.0"
+  },
+  "devDependencies": {
+    "@vercel/node": "^2.6.4"
   }
 }
